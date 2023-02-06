@@ -1,7 +1,7 @@
-import NextAuth from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import prisma from "../../../lib/prismadb"
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import {PrismaAdapter} from '@next-auth/prisma-adapter';
+import prisma from '../../../lib/prismadb';
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -11,4 +11,5 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
-})
+  secret: process.env.NEXTAUTH_SECRET,
+});
