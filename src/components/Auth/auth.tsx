@@ -1,18 +1,37 @@
+import {useMutation} from '@apollo/client';
 import {Button, Center, Image, Input, Stack, Text} from '@chakra-ui/react';
 import {Session} from 'next-auth';
 import {signIn} from 'next-auth/react';
 import {useState} from 'react';
+import UserOperations from '../../graphql/operations/user';
 
 interface IAuthProps {
   session: Session | null;
   reloadSession: () => void;
 }
 
+interface CreateUsernameData {
+  createUsername: {
+    success: boolean;
+    error?: string;
+  };
+}
+
+interface CreateUsernameInput {
+  username: string;
+}
+
 const Auth: React.FC<IAuthProps> = ({session, reloadSession}) => {
   const [username, setUsername] = useState<string>('');
 
+  const [createUsername, {data, loading, error}] = useMutation<CreateUsernameData, CreateUsernameInput>(
+    UserOperations.Mutations.createUsername
+  );
+
   const onSubmit = async () => {
+    if (!username.trim()) return;
     try {
+      await createUsername({variables: {username}});
     } catch (e) {}
   };
 
@@ -23,7 +42,9 @@ const Auth: React.FC<IAuthProps> = ({session, reloadSession}) => {
           <>
             <Text fontSize='3xl'>Create Username</Text>
             <Input placeholder='Enter the username' value={username} onChange={(e) => setUsername(e.target.value)} />
-            <Button width='100%' onClick={onSubmit}>Save</Button>
+            <Button width='100%' onClick={onSubmit}>
+              Save
+            </Button>
           </>
         ) : (
           <>
